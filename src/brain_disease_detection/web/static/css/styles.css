@@ -1,0 +1,214 @@
+/* ==========================================================================
+   Brain Disease Detection — UI styles
+   A calm, clinical theme with light/dark support driven by CSS variables.
+   ========================================================================== */
+
+:root {
+  --bg: #f4f7fb;
+  --surface: #ffffff;
+  --surface-2: #f0f4f9;
+  --text: #1a2433;
+  --text-muted: #5b6b80;
+  --border: #dbe3ec;
+  --primary: #1f7a8c;
+  --primary-strong: #155e6b;
+  --primary-contrast: #ffffff;
+  --success: #2f9e6f;
+  --danger: #c0392b;
+  --danger-bg: #fdecea;
+  --shadow: 0 8px 24px rgba(20, 40, 70, 0.08);
+  --radius: 14px;
+  --radius-sm: 8px;
+}
+
+[data-theme="dark"] {
+  --bg: #0e1621;
+  --surface: #16212e;
+  --surface-2: #1d2b3a;
+  --text: #e6edf5;
+  --text-muted: #9fb0c3;
+  --border: #2a3949;
+  --primary: #3fb0c4;
+  --primary-strong: #57c3d6;
+  --primary-contrast: #06222a;
+  --success: #4cc38a;
+  --danger: #ff6b5e;
+  --danger-bg: #3a1f1d;
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.55;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+/* Header ------------------------------------------------------------------ */
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.brand { display: flex; align-items: center; gap: 0.6rem; font-weight: 700; font-size: 1.1rem; }
+.brand-mark { font-size: 1.4rem; }
+
+.theme-toggle {
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.1rem;
+  display: grid; place-items: center;
+  transition: transform 0.15s ease, background 0.2s ease;
+}
+.theme-toggle:hover { transform: rotate(-15deg); background: var(--surface); }
+
+/* Layout ------------------------------------------------------------------ */
+.container {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 3rem;
+}
+.intro { text-align: center; margin-bottom: 1.25rem; }
+.intro h1 { font-size: 1.7rem; margin: 0 0 0.5rem; }
+.subtitle { color: var(--text-muted); margin: 0 auto; max-width: 34rem; }
+
+.disclaimer {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--primary);
+  border-radius: var(--radius-sm);
+  padding: 0.7rem 1rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+/* Card & form ------------------------------------------------------------- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.75rem;
+}
+.form-group { margin-bottom: 1.25rem; }
+label { display: block; margin-bottom: 0.45rem; font-weight: 600; font-size: 0.95rem; }
+
+select {
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 1rem;
+}
+select:focus, .btn-primary:focus-visible, .dropzone:focus-within {
+  outline: 3px solid color-mix(in srgb, var(--primary) 40%, transparent);
+  outline-offset: 2px;
+}
+
+.dropzone {
+  display: grid;
+  place-items: center;
+  gap: 0.5rem;
+  min-height: 150px;
+  padding: 1.25rem;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  cursor: pointer;
+  text-align: center;
+  color: var(--text-muted);
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.dropzone.dragover { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 8%, var(--surface-2)); }
+.dropzone-icon { font-size: 1.5rem; display: block; margin-bottom: 0.25rem; }
+.link { color: var(--primary); text-decoration: underline; }
+.preview { max-width: 100%; max-height: 220px; border-radius: var(--radius-sm); }
+.hint { font-size: 0.82rem; color: var(--text-muted); margin: 0.4rem 0 0; }
+
+.btn-primary {
+  width: 100%;
+  padding: 0.85rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--primary);
+  color: var(--primary-contrast);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  transition: background 0.2s ease;
+}
+.btn-primary:hover { background: var(--primary-strong); }
+.btn-primary:disabled { opacity: 0.7; cursor: progress; }
+
+/* Spinner ----------------------------------------------------------------- */
+.spinner {
+  width: 18px; height: 18px;
+  border: 3px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Panels ------------------------------------------------------------------ */
+.panel {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+.panel-error { background: var(--danger-bg); border-color: var(--danger); color: var(--danger); }
+.result-title { margin: 0 0 0.75rem; }
+.result-task { color: var(--text-muted); margin: 0 0 0.25rem; }
+.result-label { font-size: 1.15rem; margin: 0 0 1.25rem; }
+.result-label strong { color: var(--primary); }
+
+.confidence-header, .prob-header {
+  display: flex; justify-content: space-between;
+  font-size: 0.9rem; margin-bottom: 0.35rem;
+}
+.bar { height: 10px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+.bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--success));
+  border-radius: 999px;
+  transition: width 0.5s ease;
+}
+.breakdown-title { font-size: 1rem; margin: 1.5rem 0 0.75rem; }
+.probabilities { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.9rem; }
+
+/* Footer ------------------------------------------------------------------ */
+.site-footer {
+  text-align: center;
+  padding: 1.5rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  border-top: 1px solid var(--border);
+}
+.site-footer a { color: var(--primary); }
+
+@media (max-width: 480px) {
+  .intro h1 { font-size: 1.4rem; }
+  .card { padding: 1.25rem; }
+}
