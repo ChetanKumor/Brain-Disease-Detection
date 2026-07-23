@@ -1,0 +1,89 @@
+# ===========================================================================
+# Brain Disease Detection — application configuration
+# ---------------------------------------------------------------------------
+# Version-controlled defaults. Deployment-specific and secret values (host,
+# port, SECRET_KEY, upload limits) are overridden via environment variables /
+# a local .env file — see .env.example.
+# ===========================================================================
+
+# Input image geometry and normalisation. Must match what the models were
+# trained on (the ImageNet backbones expect 224x224 RGB).
+image:
+  height: 224
+  width: 224
+  channels: 3
+  rescale: 0.00392156862745098   # 1/255
+
+# ---------------------------------------------------------------------------
+# Diagnostic tasks.
+#
+# IMPORTANT — class label ordering:
+#   The order of `class_labels` MUST match the label order the model learned
+#   during training. Keras' `image_dataset_from_directory` /
+#   `flow_from_directory` sort class sub-folders ALPHABETICALLY, so labels are
+#   listed here in alphabetical order to match that convention. If you retrain
+#   with a different label order, update these lists accordingly — an incorrect
+#   order silently maps predictions to the wrong class.
+# ---------------------------------------------------------------------------
+diseases:
+  alzheimers:
+    display_name: "Alzheimer's Disease"
+    model_file: "alzheimer_model.keras"
+    class_labels:
+      - "MildDemented"
+      - "ModerateDemented"
+      - "NonDemented"
+      - "VeryMildDemented"
+
+  brain_stroke:
+    display_name: "Brain Stroke"
+    model_file: "brainstroke_model.keras"
+    class_labels:
+      - "Haemorrhagic"
+      - "Ischemic"
+      - "Normal"
+
+  brain_tumor:
+    display_name: "Brain Tumor"
+    model_file: "brain_tumor_model.keras"
+    # NOTE: corrected to alphabetical order to match the training-time label
+    # order (the previous hard-coded order was reversed).
+    class_labels:
+      - "Glioma"
+      - "Meningioma"
+      - "NoTumor"
+      - "Pituitary"
+
+# ---------------------------------------------------------------------------
+# Training hyper-parameters (used by `scripts/train.py`).
+# ---------------------------------------------------------------------------
+training:
+  backbone: "MobileNetV2"        # ImageNet backbone to fine-tune
+  batch_size: 32
+  epochs: 30
+  learning_rate: 0.0001          # head-training LR (backbone frozen)
+  fine_tune_learning_rate: 0.00001  # LR after unfreezing the backbone
+  fine_tune_at: 100              # unfreeze layers from this index onward
+  validation_split: 0.15
+  test_split: 0.15
+  early_stopping_patience: 6
+  reduce_lr_patience: 3
+  reduce_lr_factor: 0.5
+  seed: 42
+
+# ---------------------------------------------------------------------------
+# Filesystem layout. Relative paths are resolved against the repository root.
+# ---------------------------------------------------------------------------
+paths:
+  models_dir: "models"
+  data_dir: "data"
+
+# ---------------------------------------------------------------------------
+# Web application defaults. Override via environment variables in production.
+# ---------------------------------------------------------------------------
+app:
+  env: "development"
+  host: "0.0.0.0"
+  port: 8000
+  max_upload_mb: 10
+  log_level: "INFO"
