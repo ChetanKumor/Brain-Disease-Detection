@@ -1,0 +1,46 @@
+# Version control
+.git/
+.gitignore
+
+# Python caches / build artifacts
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Local environment & secrets
+.env
+.env.*
+!.env.example
+
+# Datasets and training outputs (never ship these in the image)
+data/
+logs/
+runs/
+mlruns/
+checkpoints/
+outputs/
+notebooks/
+
+# Docs and CI that are not needed at runtime
+docs/
+.github/
+tests/
+*.md
+!README.md
+
+# OS / editor cruft
+.idea/
+.vscode/
+.DS_Store

@@ -1,0 +1,93 @@
+# ---------------------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+downloads/
+eggs/
+.eggs/
+*.egg-info/
+*.egg
+.installed.cfg
+wheels/
+share/python-wheels/
+MANIFEST
+
+# ---------------------------------------------------------------------------
+# Virtual environments
+# ---------------------------------------------------------------------------
+.venv/
+venv/
+env/
+ENV/
+.python-version
+
+# ---------------------------------------------------------------------------
+# Testing / coverage / type checking
+# ---------------------------------------------------------------------------
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+.tox/
+.nox/
+
+# ---------------------------------------------------------------------------
+# Environment & secrets
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+
+# ---------------------------------------------------------------------------
+# Machine learning artifacts (kept out of version control)
+# ---------------------------------------------------------------------------
+# Trained model weights are large binaries — distribute via releases/registry.
+models/*.keras
+models/*.h5
+models/*.hdf5
+models/*.pb
+models/*.onnx
+models/*.tflite
+models/saved_model/
+
+# Datasets are large and often licensed — never commit them.
+data/raw/
+data/processed/
+data/interim/
+data/external/
+*.csv
+*.npy
+*.npz
+
+# Training outputs
+logs/
+runs/
+mlruns/
+checkpoints/
+outputs/
+*.log
+
+# ---------------------------------------------------------------------------
+# Notebooks
+# ---------------------------------------------------------------------------
+.ipynb_checkpoints/
+
+# ---------------------------------------------------------------------------
+# IDE / editor / OS
+# ---------------------------------------------------------------------------
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db

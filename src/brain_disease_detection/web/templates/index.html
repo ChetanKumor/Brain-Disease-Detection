@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AI-assisted classification of brain MRI and CT scans for Alzheimer's, stroke, and tumor detection." />
+  <title>Brain Disease Detection</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">🧠</span>
+      <span class="brand-name">Brain Disease Detection</span>
+    </div>
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle colour theme">
+      <span class="theme-toggle-icon">🌙</span>
+    </button>
+  </header>
+
+  <main class="container">
+    <section class="intro">
+      <h1>Brain MRI / CT Scan Classifier</h1>
+      <p class="subtitle">
+        Upload a scan and select a diagnostic task. A deep-learning model returns
+        the most likely class along with its confidence.
+      </p>
+    </section>
+
+    <p class="disclaimer" role="note">
+      <strong>Research &amp; educational use only.</strong> This tool is not a
+      medical device and must not be used for diagnosis or treatment decisions.
+    </p>
+
+    <div class="card">
+      <form id="predict-form" method="post" action="{{ url_for('main.index') }}" enctype="multipart/form-data" novalidate>
+        <div class="form-group">
+          <label for="disease">Diagnostic task</label>
+          <select id="disease" name="disease" required>
+            <option value="" disabled {% if not selected_disease %}selected{% endif %}>Select a task…</option>
+            {% for disease in diseases %}
+              <option value="{{ disease.key }}"
+                      {% if disease.key == selected_disease %}selected{% endif %}
+                      {% if not disease.available %}data-unavailable="true"{% endif %}>
+                {{ disease.display_name }}{% if not disease.available %} (model not loaded){% endif %}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="image">Scan image</label>
+          <label id="dropzone" class="dropzone" for="image">
+            <input id="image" name="image" type="file" accept="image/*" required hidden />
+            <img id="preview" class="preview" alt="" hidden />
+            <span id="dropzone-text" class="dropzone-text">
+              <span class="dropzone-icon" aria-hidden="true">⬆️</span>
+              Drag &amp; drop an image here, or <span class="link">browse</span>
+            </span>
+          </label>
+          <p class="hint">PNG, JPG, BMP, TIFF or WebP.</p>
+        </div>
+
+        <button type="submit" class="btn-primary">
+          <span class="btn-label">Analyze scan</span>
+          <span id="spinner" class="spinner" hidden aria-hidden="true"></span>
+        </button>
+      </form>
+    </div>
+
+    <!-- Error (server-rendered fallback / progressive enhancement target) -->
+    <div id="error-panel" class="panel panel-error" {% if not error %}hidden{% endif %} role="alert">
+      <strong>Something went wrong:</strong>
+      <span id="error-message">{{ error or '' }}</span>
+    </div>
+
+    <!-- Result -->
+    <div id="result-panel" class="panel panel-result" {% if not result %}hidden{% endif %} aria-live="polite">
+      <h2 class="result-title">Result</h2>
+      <p class="result-task">Task: <span id="result-task">{{ result.display_name if result else '' }}</span></p>
+      <p class="result-label">
+        Prediction: <strong id="result-label">{{ result.predicted_label if result else '' }}</strong>
+      </p>
+      <div class="confidence">
+        <div class="confidence-header">
+          <span>Confidence</span>
+          <span id="confidence-value">{{ '%.1f%%'|format(result.confidence * 100) if result else '' }}</span>
+        </div>
+        <div class="bar"><div id="confidence-bar" class="bar-fill" style="width: {{ (result.confidence * 100) if result else 0 }}%"></div></div>
+      </div>
+
+      <h3 class="breakdown-title">Class probabilities</h3>
+      <ul id="probabilities" class="probabilities">
+        {% if result %}
+          {% for p in result.probabilities %}
+            <li>
+              <div class="prob-header"><span>{{ p.label }}</span><span>{{ '%.1f%%'|format(p.probability * 100) }}</span></div>
+              <div class="bar"><div class="bar-fill" style="width: {{ p.probability * 100 }}%"></div></div>
+            </li>
+          {% endfor %}
+        {% endif %}
+      </ul>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Built with TensorFlow &amp; Flask · <a href="/api/health">API status</a></p>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+</body>
+</html>
