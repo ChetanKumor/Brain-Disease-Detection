@@ -47,9 +47,7 @@ def test_api_predict_success(client, make_png):
 
 
 def test_html_form_renders_result(client, make_png):
-    response = client.post(
-        "/", data=_upload(make_png), content_type="multipart/form-data"
-    )
+    response = client.post("/", data=_upload(make_png), content_type="multipart/form-data")
     assert response.status_code == 200
     assert b"result-panel" in response.data
     assert b"Prediction:" in response.data

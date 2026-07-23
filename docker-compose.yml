@@ -1,0 +1,21 @@
+services:
+  web:
+    build: .
+    image: brain-disease-detection:latest
+    ports:
+      - "8000:8000"
+    environment:
+      APP_ENV: production
+      PORT: "8000"
+      LOG_LEVEL: INFO
+      # Provide a real secret in a .env file or your orchestrator's secrets.
+      SECRET_KEY: ${SECRET_KEY:-change-me}
+    volumes:
+      # Mount trained models at runtime (they are not baked into the image).
+      - ./models:/app/models:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

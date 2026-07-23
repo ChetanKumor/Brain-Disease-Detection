@@ -1,0 +1,15 @@
+# Development & CI dependencies.
+#
+# Deliberately excludes TensorFlow: the inference/web layers are decoupled from
+# it (models are injected), so the full test suite and linters run without the
+# heavy install. Use requirements.txt for a production/runtime environment.
+flask>=3.0,<4.0
+numpy>=1.26
+pillow>=10.0
+pyyaml>=6.0
+
+pytest>=8.0
+pytest-cov>=5.0
+ruff>=0.6
+mypy>=1.11
+types-PyYAML>=6.0

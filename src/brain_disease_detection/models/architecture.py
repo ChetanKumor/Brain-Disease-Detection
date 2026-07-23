@@ -11,7 +11,8 @@ All TensorFlow imports are deferred to call time.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable
+from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 from ..exceptions import ConfigurationError
 from ..logger import get_logger
@@ -29,7 +30,7 @@ _BACKBONES: dict[str, str] = {
 }
 
 
-def _resolve_backbone_factory(name: str) -> Callable[..., "tf.keras.Model"]:
+def _resolve_backbone_factory(name: str) -> Callable[..., tf.keras.Model]:
     import tensorflow as tf
 
     if name not in _BACKBONES:
@@ -40,7 +41,7 @@ def _resolve_backbone_factory(name: str) -> Callable[..., "tf.keras.Model"]:
     return getattr(tf.keras.applications, _BACKBONES[name])
 
 
-def build_augmentation() -> "tf.keras.Sequential":
+def build_augmentation() -> tf.keras.Sequential:
     """Return range-agnostic geometric augmentations applied during training.
 
     Augmentation layers are inert at inference time, so they can safely live
@@ -63,7 +64,7 @@ def build_model(
     input_shape: tuple[int, int, int],
     backbone_name: str = "MobileNetV2",
     dropout: float = 0.3,
-) -> tuple["tf.keras.Model", "tf.keras.Model"]:
+) -> tuple[tf.keras.Model, tf.keras.Model]:
     """Assemble a transfer-learning classifier.
 
     The backbone is frozen so the head can be trained first; call
@@ -96,9 +97,7 @@ def build_model(
     x = backbone(x, training=False)
     x = tf.keras.layers.GlobalAveragePooling2D(name="global_pool")(x)
     x = tf.keras.layers.Dropout(dropout, name="head_dropout")(x)
-    outputs = tf.keras.layers.Dense(
-        num_classes, activation="softmax", name="predictions"
-    )(x)
+    outputs = tf.keras.layers.Dense(num_classes, activation="softmax", name="predictions")(x)
 
     model = tf.keras.Model(inputs, outputs, name=f"{backbone_name}_classifier")
     logger.info(
@@ -111,7 +110,7 @@ def build_model(
     return model, backbone
 
 
-def enable_fine_tuning(backbone: "tf.keras.Model", fine_tune_at: int) -> None:
+def enable_fine_tuning(backbone: tf.keras.Model, fine_tune_at: int) -> None:
     """Unfreeze the backbone from layer ``fine_tune_at`` onward.
 
     Lower layers (generic edges/textures) stay frozen; higher, more task-specific

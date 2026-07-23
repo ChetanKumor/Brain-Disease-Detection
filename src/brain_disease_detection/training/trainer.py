@@ -49,7 +49,7 @@ class TrainingResult:
         return json.dumps(asdict(self), indent=2)
 
 
-def _build_callbacks(config: Config, checkpoint_path: Path) -> list["tf.keras.callbacks.Callback"]:
+def _build_callbacks(config: Config, checkpoint_path: Path) -> list[tf.keras.callbacks.Callback]:
     import tensorflow as tf
 
     t = config.training
@@ -76,7 +76,7 @@ def _build_callbacks(config: Config, checkpoint_path: Path) -> list["tf.keras.ca
     ]
 
 
-def _merge_history(*histories: "tf.keras.callbacks.History") -> dict[str, list[float]]:
+def _merge_history(*histories: tf.keras.callbacks.History) -> dict[str, list[float]]:
     merged: dict[str, list[float]] = {}
     for history in histories:
         for key, values in history.history.items():

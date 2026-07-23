@@ -17,9 +17,10 @@ at runtime.
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass, field
+from collections.abc import Mapping
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
 
 import yaml
 
@@ -64,13 +65,10 @@ class DiseaseConfig:
 
     def __post_init__(self) -> None:
         if not self.class_labels:
-            raise ConfigurationError(
-                f"Disease '{self.key}' must define at least one class label."
-            )
+            raise ConfigurationError(f"Disease '{self.key}' must define at least one class label.")
         if len(set(self.class_labels)) != len(self.class_labels):
             raise ConfigurationError(
-                f"Disease '{self.key}' has duplicate class labels: "
-                f"{self.class_labels}"
+                f"Disease '{self.key}' has duplicate class labels: {self.class_labels}"
             )
 
     @property
@@ -126,7 +124,6 @@ class Config:
     diseases: Mapping[str, DiseaseConfig]
     models_dir: Path
     data_dir: Path
-    _label_index: dict[str, DiseaseConfig] = field(default_factory=dict, repr=False)
 
     def disease(self, key: str) -> DiseaseConfig:
         """Return the :class:`DiseaseConfig` for ``key``.
@@ -167,7 +164,9 @@ def _parse_diseases(raw: Mapping[str, Any]) -> dict[str, DiseaseConfig]:
     diseases: dict[str, DiseaseConfig] = {}
     for key, spec in raw.items():
         if not isinstance(spec, Mapping):
-            raise ConfigurationError(f"Disease '{key}' must be a mapping, got {type(spec).__name__}.")
+            raise ConfigurationError(
+                f"Disease '{key}' must be a mapping, got {type(spec).__name__}."
+            )
         try:
             diseases[key] = DiseaseConfig(
                 key=key,
@@ -176,9 +175,7 @@ def _parse_diseases(raw: Mapping[str, Any]) -> dict[str, DiseaseConfig]:
                 class_labels=tuple(str(label) for label in spec["class_labels"]),
             )
         except KeyError as exc:
-            raise ConfigurationError(
-                f"Disease '{key}' is missing required field {exc}."
-            ) from exc
+            raise ConfigurationError(f"Disease '{key}' is missing required field {exc}.") from exc
     return diseases
 
 
@@ -191,7 +188,9 @@ def _load_yaml(path: Path) -> dict[str, Any]:
     except yaml.YAMLError as exc:
         raise ConfigurationError(f"Failed to parse YAML configuration {path}: {exc}") from exc
     if not isinstance(data, Mapping):
-        raise ConfigurationError(f"Configuration root must be a mapping, got {type(data).__name__}.")
+        raise ConfigurationError(
+            f"Configuration root must be a mapping, got {type(data).__name__}."
+        )
     return dict(data)
 
 
@@ -224,8 +223,8 @@ def load_config(path: str | os.PathLike[str] | None = None) -> Config:
     Raises:
         ConfigurationError: if the file is missing, malformed, or inconsistent.
     """
-    config_path = Path(path) if path is not None else Path(
-        os.getenv("CONFIG_PATH", DEFAULT_CONFIG_PATH)
+    config_path = (
+        Path(path) if path is not None else Path(os.getenv("CONFIG_PATH", DEFAULT_CONFIG_PATH))
     )
     raw = _load_yaml(config_path)
 
@@ -240,14 +239,20 @@ def load_config(path: str | os.PathLike[str] | None = None) -> Config:
     training_raw = raw.get("training", {})
     training_defaults = TrainingConfig()
     training = TrainingConfig(
-        batch_size=_as_int(training_raw.get("batch_size", training_defaults.batch_size), "batch_size"),
+        batch_size=_as_int(
+            training_raw.get("batch_size", training_defaults.batch_size), "batch_size"
+        ),
         epochs=_as_int(training_raw.get("epochs", training_defaults.epochs), "epochs"),
         learning_rate=float(training_raw.get("learning_rate", training_defaults.learning_rate)),
         fine_tune_learning_rate=float(
             training_raw.get("fine_tune_learning_rate", training_defaults.fine_tune_learning_rate)
         ),
-        fine_tune_at=_as_int(training_raw.get("fine_tune_at", training_defaults.fine_tune_at), "fine_tune_at"),
-        validation_split=float(training_raw.get("validation_split", training_defaults.validation_split)),
+        fine_tune_at=_as_int(
+            training_raw.get("fine_tune_at", training_defaults.fine_tune_at), "fine_tune_at"
+        ),
+        validation_split=float(
+            training_raw.get("validation_split", training_defaults.validation_split)
+        ),
         test_split=float(training_raw.get("test_split", training_defaults.test_split)),
         early_stopping_patience=_as_int(
             training_raw.get("early_stopping_patience", training_defaults.early_stopping_patience),
@@ -257,7 +262,9 @@ def load_config(path: str | os.PathLike[str] | None = None) -> Config:
             training_raw.get("reduce_lr_patience", training_defaults.reduce_lr_patience),
             "reduce_lr_patience",
         ),
-        reduce_lr_factor=float(training_raw.get("reduce_lr_factor", training_defaults.reduce_lr_factor)),
+        reduce_lr_factor=float(
+            training_raw.get("reduce_lr_factor", training_defaults.reduce_lr_factor)
+        ),
         seed=_as_int(training_raw.get("seed", training_defaults.seed), "seed"),
         backbone=str(training_raw.get("backbone", training_defaults.backbone)),
     )
@@ -276,5 +283,4 @@ def load_config(path: str | os.PathLike[str] | None = None) -> Config:
         diseases=diseases,
         models_dir=models_dir,
         data_dir=data_dir,
-        _label_index={key: cfg for key, cfg in diseases.items()},
     )

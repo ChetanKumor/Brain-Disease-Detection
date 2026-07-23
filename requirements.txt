@@ -1,0 +1,9 @@
+# Runtime dependencies (production).
+# Pinned to compatible ranges; run `pip install -r requirements.txt`.
+flask>=3.0,<4.0
+numpy>=1.26
+pillow>=10.0
+pyyaml>=6.0
+tensorflow>=2.16,<2.20
+gunicorn>=21.2
+python-dotenv>=1.0

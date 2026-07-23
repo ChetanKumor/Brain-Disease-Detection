@@ -10,7 +10,7 @@ protocol, so a registry can be handed straight to a :class:`Predictor`.
 from __future__ import annotations
 
 import threading
-from typing import TYPE_CHECKING, Dict
+from typing import TYPE_CHECKING
 
 from ..config import Config
 from ..exceptions import ModelLoadError, ModelNotFoundError
@@ -27,14 +27,14 @@ class ModelRegistry:
 
     def __init__(self, config: Config) -> None:
         self._config = config
-        self._cache: Dict[str, "Model"] = {}
+        self._cache: dict[str, Model] = {}
         self._lock = threading.Lock()
 
-    def __call__(self, disease_key: str) -> "Model":
+    def __call__(self, disease_key: str) -> Model:
         """Alias for :meth:`get`, so the registry is a valid ``ModelProvider``."""
         return self.get(disease_key)
 
-    def get(self, disease_key: str) -> "Model":
+    def get(self, disease_key: str) -> Model:
         """Return the model for ``disease_key``, loading it on first use.
 
         Raises:
@@ -57,7 +57,7 @@ class ModelRegistry:
             self._cache[disease_key] = model
             return model
 
-    def _load(self, disease_key: str) -> "Model":
+    def _load(self, disease_key: str) -> Model:
         path = self._config.model_path(disease_key)
         if not path.exists():
             raise ModelNotFoundError(
@@ -71,15 +71,15 @@ class ModelRegistry:
 
             model = tf.keras.models.load_model(path)
         except Exception as exc:  # noqa: BLE001 - re-wrapped as a domain error
-            raise ModelLoadError(f"Failed to load model '{disease_key}' from {path}: {exc}") from exc
+            raise ModelLoadError(
+                f"Failed to load model '{disease_key}' from {path}: {exc}"
+            ) from exc
         logger.info("Model '%s' loaded successfully.", disease_key)
         return model
 
-    def availability(self) -> Dict[str, bool]:
+    def availability(self) -> dict[str, bool]:
         """Map each configured disease to whether its model file exists on disk."""
-        return {
-            key: self._config.model_path(key).exists() for key in self._config.diseases
-        }
+        return {key: self._config.model_path(key).exists() for key in self._config.diseases}
 
     def warmup(self) -> None:
         """Eagerly load every available model (useful at server start-up)."""

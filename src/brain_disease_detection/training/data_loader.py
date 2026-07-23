@@ -7,9 +7,10 @@ split, so the held-out portion is further divided into validation and test sets.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Sequence
+from typing import TYPE_CHECKING
 
 from ..config import ImageConfig, TrainingConfig
 from ..exceptions import ConfigurationError
@@ -25,9 +26,9 @@ logger = get_logger(__name__)
 class DatasetBundle:
     """The three dataset splits plus the resolved class names."""
 
-    train: "tf.data.Dataset"
-    validation: "tf.data.Dataset"
-    test: "tf.data.Dataset"
+    train: tf.data.Dataset
+    validation: tf.data.Dataset
+    test: tf.data.Dataset
     class_names: tuple[str, ...]
 
 
@@ -61,18 +62,17 @@ def build_datasets(
     holdout_fraction = training_config.validation_split + training_config.test_split
     if not 0.0 < holdout_fraction < 1.0:
         raise ConfigurationError(
-            "validation_split + test_split must be between 0 and 1, got "
-            f"{holdout_fraction}."
+            f"validation_split + test_split must be between 0 and 1, got {holdout_fraction}."
         )
 
-    common = dict(
-        directory=str(data_dir),
-        validation_split=holdout_fraction,
-        seed=training_config.seed,
-        image_size=image_config.target_size,
-        batch_size=training_config.batch_size,
-        label_mode="int",
-    )
+    common = {
+        "directory": str(data_dir),
+        "validation_split": holdout_fraction,
+        "seed": training_config.seed,
+        "image_size": image_config.target_size,
+        "batch_size": training_config.batch_size,
+        "label_mode": "int",
+    }
     train_ds = tf.keras.utils.image_dataset_from_directory(subset="training", **common)
     holdout_ds = tf.keras.utils.image_dataset_from_directory(subset="validation", **common)
 
@@ -97,7 +97,7 @@ def build_datasets(
 
     rescale = tf.constant(image_config.rescale, dtype=tf.float32)
 
-    def _normalise(images: "tf.Tensor", labels: "tf.Tensor") -> tuple["tf.Tensor", "tf.Tensor"]:
+    def _normalise(images: tf.Tensor, labels: tf.Tensor) -> tuple[tf.Tensor, tf.Tensor]:
         return tf.cast(images, tf.float32) * rescale, labels
 
     autotune = tf.data.AUTOTUNE

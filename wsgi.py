@@ -17,6 +17,14 @@ from pathlib import Path
 # Support running straight from a checkout without installing the package.
 sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
 
+# Load variables from a local .env file if python-dotenv is available.
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv()
+except ImportError:  # pragma: no cover - optional convenience dependency
+    pass
+
 from brain_disease_detection.config import load_config  # noqa: E402
 from brain_disease_detection.web import create_app  # noqa: E402
 

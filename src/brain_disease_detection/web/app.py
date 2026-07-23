@@ -7,8 +7,6 @@ predictor), and lets configuration flow in explicitly.
 
 from __future__ import annotations
 
-from typing import Optional
-
 from flask import Flask
 from werkzeug.exceptions import RequestEntityTooLarge
 
@@ -39,9 +37,7 @@ def _register_error_handlers(app: Flask) -> None:
     app.register_error_handler(ConfigurationError, lambda e: handle_domain_error(e, 400))
     app.register_error_handler(
         RequestEntityTooLarge,
-        lambda e: handle_domain_error(
-            ImageProcessingError("The uploaded file is too large."), 413
-        ),
+        lambda e: handle_domain_error(ImageProcessingError("The uploaded file is too large."), 413),
     )
     # Server / availability errors -> 5xx
     app.register_error_handler(ModelNotFoundError, lambda e: handle_domain_error(e, 503))
@@ -50,8 +46,8 @@ def _register_error_handlers(app: Flask) -> None:
 
 
 def create_app(
-    config: Optional[Config] = None,
-    predictor: Optional[Predictor] = None,
+    config: Config | None = None,
+    predictor: Predictor | None = None,
 ) -> Flask:
     """Build and configure a Flask application.
 

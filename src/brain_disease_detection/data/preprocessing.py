@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import io
 from pathlib import Path
-from typing import BinaryIO, Union
+from typing import BinaryIO
 
 import numpy as np
 from PIL import Image, UnidentifiedImageError
@@ -21,7 +21,7 @@ from ..logger import get_logger
 logger = get_logger(__name__)
 
 # Anything that can be turned into a decoded image.
-ImageSource = Union[str, Path, bytes, bytearray, BinaryIO]
+ImageSource = str | Path | bytes | bytearray | BinaryIO
 
 
 def load_image(source: ImageSource) -> Image.Image:
@@ -73,8 +73,7 @@ def preprocess_image(source: ImageSource, image_config: ImageConfig) -> np.ndarr
 
     if array.shape != image_config.input_shape:
         raise ImageProcessingError(
-            f"Preprocessed image has shape {array.shape}, expected "
-            f"{image_config.input_shape}."
+            f"Preprocessed image has shape {array.shape}, expected {image_config.input_shape}."
         )
 
     return np.expand_dims(array, axis=0)

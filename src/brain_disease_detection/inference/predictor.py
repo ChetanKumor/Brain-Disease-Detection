@@ -88,9 +88,7 @@ def _to_probability_vector(raw: np.ndarray, num_classes: int) -> np.ndarray:
             f"{num_classes} classes. The model and configuration are out of sync."
         )
 
-    is_distribution = bool((vector >= 0).all()) and bool(
-        np.isclose(vector.sum(), 1.0, atol=1e-3)
-    )
+    is_distribution = bool((vector >= 0).all()) and bool(np.isclose(vector.sum(), 1.0, atol=1e-3))
     if is_distribution:
         return vector
 

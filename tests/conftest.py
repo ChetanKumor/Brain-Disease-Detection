@@ -31,7 +31,9 @@ def config() -> Config:
     return load_config()
 
 
-def _png_bytes(size: tuple[int, int] = (64, 64), color: tuple[int, int, int] = (10, 20, 30)) -> bytes:
+def _png_bytes(
+    size: tuple[int, int] = (64, 64), color: tuple[int, int, int] = (10, 20, 30)
+) -> bytes:
     buffer = io.BytesIO()
     Image.new("RGB", size, color).save(buffer, format="PNG")
     return buffer.getvalue()
